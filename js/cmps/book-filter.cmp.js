@@ -4,7 +4,7 @@ export default {
             <h1>What Book Are You Looking For?</h1>
             <h2>From applied literature to educational resources, we have a lot of books to offer to you. We provide only the best books to read and enjoy.</h2>
             <div class="serch-btn-input">
-                <img @click="show = !show"  src="/img/icon-filter.png" alt="">
+                <img @click="show = !show"  src="./img/icon-filter.png" alt="">
             <input @input="setFilter" type="text" v-model="filterBy.title" placeholder="Search by title">
             <button>Search</button>
         </div>
