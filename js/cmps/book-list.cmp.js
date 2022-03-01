@@ -14,8 +14,10 @@ export default {
                 <router-link :to="'/book/'+book.id">
                 <book-preview :book="book" />
                 </router-link>
+            
             </li>
         </ul>
+
     </section>
     `,
     components: {

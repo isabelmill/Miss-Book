@@ -7,6 +7,7 @@ import {
 import bookFilter from '../cmps/book-filter.cmp.js';
 import bookList from '../cmps/book-list.cmp.js';
 import bookDetails from './book-details.cmp.js';
+import addBook from "../cmps/add-book.cmp.js";
 
 export default {
     template: `
@@ -16,26 +17,36 @@ export default {
                     <book-filter @filtered="setFilter" />
                     <img class="gif" src="./img/bookimg5.jpg" alt="">
                 </div>
+
+                
+                
                 <book-list v-if="!selectedBook" :books="booksForDisplay" @selected="selectBook" />
                 <book-details v-else :book="selectedBook" @close="selectBook" />
+                <add-book @added="renderBooks"></add-book>
+
+
+                <!-- <book-add v-show="toggleModal" class="modal" @close="closeModal"></book-add> -->
+                
             </main>
+            <!-- <component :is="currCmp" /> -->
         </section>
     `,
     components: {
-        bookList,
-        bookDetails,
-        bookFilter,
+        'book-list': bookList,
+        'book-details': bookDetails,
+        'book-filter': bookFilter,
+        'add-book': addBook,
     },
     data() {
         return {
             books: null,
             selectedBook: null,
-            filterBy: null
+            filterBy: null,
+            toggleModal: false,
         }
     },
     created() {
-        bookService.query()
-            .then(books => this.books = books);
+        this.renderBooks()
     },
     methods: {
         selectBook(book) {
@@ -44,6 +55,17 @@ export default {
         },
         setFilter(filterBy) {
             this.filterBy = filterBy;
+        },
+        openModal() {
+            this.toggleModal = true;
+        },
+        closeModal() {
+            this.toggleModal = false;
+        },
+        renderBooks() {
+            bookService.query().then((books) => {
+                this.books = books;
+            });
         },
     },
     computed: {
@@ -57,7 +79,12 @@ export default {
             return this.books.filter(book =>
                 book.listPrice.amount >= start && book.listPrice.amount <= end && regex.test(book.title));
 
-        }
+        },
+        // currCmp() {
+        //     let randomNum = Math.random()
+        //     if (randomNum > 0.5) return 'book-filter'
+        //     else 'book-list'
+        // },
     },
     unmounted() {},
 }

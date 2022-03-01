@@ -13,14 +13,20 @@ export const bookService = {
     get,
     saveReview,
     removeReview,
+    ask,
+    saveNewBook,
 };
 
 function query() {
     return storageService.query(BOOKS_KEY);
 }
 
+
 function get(bookId) {
-    return storageService.get(BOOKS_KEY, bookId);
+    return storageService.get(BOOKS_KEY, bookId)
+        .then(book => {
+            return _setNextPrevBookId(book)
+        })
 }
 
 function removeReview(book, reviewId) {
@@ -31,14 +37,29 @@ function removeReview(book, reviewId) {
 
 
 function saveReview(review, book) {
-    review.id = _makeId();
-    if (!book.reviews) {
-        book["reviews"] = [];
-    }
+    review.id = utilService.makeId();
+    if (!book.reviews) book.reviews = [];
     book.reviews.push(review);
     return storageService.put(BOOKS_KEY, book);
 }
 
+function _setNextPrevBookId(book) {
+    return storageService.query(BOOKS_KEY).then(books => {
+        const bookIdx = books.findIndex(currBook => currBook.id === book.id)
+        book.nextBookId = (books[bookIdx + 1]) ? books[bookIdx + 1].id : books[0].id
+        book.prevBookId = (books[bookIdx - 1]) ? books[bookIdx - 1].id : books[books.length - 1].id
+        return book
+    })
+}
+
+function ask(str) {
+    return axios
+        .get(`https://www.googleapis.com/books/v1/volumes?printType=books&q=${str}`)
+        .then((books) => {
+            utilService.saveToStorage(str, books.data.items);
+            return books.data.items;
+        });
+}
 
 function _createBooks() {
     let books = utilService.loadFromStorage(BOOKS_KEY);
@@ -489,12 +510,13 @@ function _createBooks() {
     return books;
 }
 
-function _makeId(length = 5) {
-    var text = "";
-    var possible =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < length; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
+function saveNewBook(newBook) {
+    return query().then((books) => {
+        let haveIt = books.some((book) => {
+            return book.id === newBook.id;
+        });
+        if (!haveIt) {
+            storageService.post("books", newBook);
+        }
+    });
 }

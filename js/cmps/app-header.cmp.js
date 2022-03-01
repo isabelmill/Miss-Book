@@ -9,11 +9,18 @@ export default {
                     <router-link to="/"><li><a>Home</a></li></router-link>
                     <router-link to="/book"><li><a>Books</a></li></router-link>
                     <router-link to="/about"><li><a>About</a></li></router-link>
-
                 </ul>
             </nav>
-        </header>
 
-    
-    `
+            <!-- <transition name="fade">
+            <router-view v-slot="{ Component  }">
+            <component :is="Component"/>
+            </transition>
+            </router-view> -->
+            
+            
+            
+            <!-- <component :is="currComponent"/> -->
+        </header>
+        `,
 }

@@ -6,6 +6,12 @@ export default {
     // props: ['book'],
     template: `
         <section v-if="book" class="book-details">
+            <div class="btn-next">
+        <router-link :to="'/book/'+book.prevBookId">
+           <img src="./img/prev-btn.JPG" alt="">
+        </router-link>
+        </div> 
+
             <div class="book-more-details">
                 <img :src="book.thumbnail">
                 
@@ -50,81 +56,94 @@ export default {
         </div>
         
             <div class="review-container">
-                <form @submit.prevent="save" class="review-form" >
+                <form @submit.prevent="saveReview" class="review-form" >
                 <h2>New Review</h2>
                 <br>
-                <label for="reader">Full Name: </label>
-                <input v-model="review.reader" type="text" id="reader" required>
+                <label for="user">Full Name: </label>
+                <input v-model="review.user" type="text" id="user" required>
                 <label for="rate">Rate:</label> 
                 <select v-model.number="review.rate" id="rate" required>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
                 </select>
-
+                
                 <label >Date: </label>
                 <input type="date" v-model="review.date" required>
-
+                
                 <label>Add a written review:  </label>
-
-                <textarea v-model="review.msg" name="text"  rows="3" cols="30"  required></textarea>
-
+                
+                <textarea v-model="review.text" name="text"  rows="3" cols="30"  required></textarea>
+                
                 <button type="submit" >Submit</button>
-                </form>
-            </div>
-            </div>
-        </section>
+            </form>
+        </div>
+    </div>
+    <div class="btn-prev">
+    <router-link :to="'/book/'+book.nextBookId">
+        <img src="./img/next-btn.JPG" alt="">
+    </router-link>
+    </div>
+</section>
 
-        <div class="reviews-container">
+        <div class="reviews-container" >
         <h1>Reviews</h1>
-        <div  v-if="review" class="reviews" v-for="reviewInBook in book.reviews">
+        <div v-if="book &&book.reviews" class="reviews" v-for="reviewInBook in book.reviews">
             <div class="review-info">
             <div class="user author">
             <img src="./img/avatar/6.JPG" alt="">
-            <p>Name: {{reviewInBook.reader}}</p>
+            <p>Name: {{reviewInBook.user}}</p>
             </div>
             <p>Rate : {{reviewInBook.rate}}/5</p>
             <p>Reviewed At : {{reviewInBook.date}}</p>
             </div>
             <div class="review-text">
-            <p class="text-area-content"> {{reviewInBook.msg}}</p>
-            <button @click="remove" >Delete</button>
+            <p class="text-area-content"> {{reviewInBook.text}}</p>
+            <button @click="removeReview" >Delete</button>
             </div>
             </div>
         </div>
         </div>
-      <!-- </div> -->
-
-
     `,
     data() {
         return {
             book: null,
-            review: null
+            review: {
+                reviewId: null,
+                user: null,
+                rate: 0,
+                date: null,
+                text: null,
+            }
         };
     },
     created() {
-
         const id = this.$route.params.bookId;
         bookService.get(id)
             .then(book => this.book = book);
-        this.review = {
-            id: null,
-            reader: null,
-            rate: 0,
-            date: null,
-            msg: null,
-        };
     },
     methods: {
-        remove() {
-            bookService.removeReview(this.book, this.review.id);
+        removeReview() {
+            Swal.fire({
+                title: 'Are you sure?',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        'Deleted!',
+                        'Your review has been deleted.',
+                    )
+                    bookService.removeReview(this.book, this.review.id);
+                }
+            })
         },
-        save() {
+        saveReview() {
             bookService.saveReview(this.review, this.book).then((book) => {
-                this.$emit("reviewAdded", book);
                 this.review = {
                     id: null,
                     reader: null,
@@ -132,8 +151,19 @@ export default {
                     date: null,
                     msg: null,
                 };
+                Swal.fire({
+                    position: 'middle',
+                    icon: 'success',
+                    title: 'Review has been submitted',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             });
         },
+        loadBook() {
+            bookService.get(this.bookId)
+                .then(book => this.book = book);
+        }
     },
     computed: {
         renderCurrency() {
@@ -186,8 +216,18 @@ export default {
             const min = Math.ceil(7);
             const max = Math.floor(10);
             const num = Math.floor(Math.random() * (max - min + 1) + min);
-            console.log('num:', num);
             return `./img/avatar/${num}.JPG`
-        }
+        },
+        bookId() {
+            return this.$route.params.bookId
+        },
+    },
+    watch: {
+        bookId: {
+            handler() {
+                this.loadBook()
+            },
+            immediate: true,
+        },
     }
 }

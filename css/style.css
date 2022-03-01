@@ -659,3 +659,96 @@ select:focus {
     padding: 5px;
     border-radius: 5px;
 }
+
+.btn-next {
+    width: 100px;
+    height: 200px;
+    object-fit: contain;
+    padding-right: 150px;
+}
+
+.btn-next img {
+    width: 60px;
+}
+
+.btn-prev {
+    width: 100px;
+    height: 200px;
+    object-fit: contain;
+    padding-left: 150px;
+}
+
+.btn-prev img {
+    width: 60px;
+}
+
+.search-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    width: 600px;
+    background-color: rgb(70, 207, 107);
+    margin: auto;
+    border-radius: 5px;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: -1px 1px 9px 1px rgb(0 0 0 / 5%);
+    color: rgb(255, 255, 255);
+}
+
+.search-google h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.search-google ul {
+    background-color: rgb(255, 255, 255);
+    color: black;
+}
+
+.search-google input {
+    font-size: 1rem;
+    background-color: rgb(255, 255, 255);
+    margin-bottom: 20px;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    border: 2px solid rgb(200, 198, 198);
+    background-color: rgb(255, 255, 255);
+}
+
+.search-google h1 {
+    font-size: 1.2rem;
+}
+
+.search-google h3 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+/* .search-google button {
+    cursor: pointer;
+} */
+
+.new-books-list {
+    list-style-type: none;
+    width: 490px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 5px;
+    line-break: auto;
+    border: 1px solid #adadad;
+    align-items: center;
+}
+
+.search-google button {
+    background-color: rgb(70, 207, 107);
+    border: none;
+    padding: 5px;
+    width: 25px;
+    color: aliceblue;
+    cursor: pointer;
+}

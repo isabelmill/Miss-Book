@@ -21,7 +21,9 @@ export default {
         </div>
         </Transition>
 
+
         </section>
+      
     `,
     data() {
         return {

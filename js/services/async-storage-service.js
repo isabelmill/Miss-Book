@@ -4,8 +4,10 @@ export const storageService = {
     post,
     put,
     remove,
-    postMany
+    postMany,
 }
+
+
 
 function query(entityType) {
     var entities = JSON.parse(localStorage.getItem(entityType)) || []
